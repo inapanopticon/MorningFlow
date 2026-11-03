@@ -1,0 +1,7 @@
+<resources>
+    <string name="session_leaving_loading">Loading…</string>
+    <string name="session_leaving_value">%1$s</string>
+    <string name="session_leaving_location_only">%1$s · Weather unavailable</string>
+    <string name="session_leaving_weather_only">%1$d°C</string>
+    <string name="session_leaving_all_day_title">%1$s (all day)</string>
+</resources>

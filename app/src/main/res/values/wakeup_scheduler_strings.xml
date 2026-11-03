@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wake_detection_channel_name">Wake-up detection</string>
+    <string name="wake_detection_channel_description">Shows when MorningFlow is checking for wake-up movement</string>
+    <string name="wake_detection_notification_title">Wake-up detection is active</string>
+    <string name="wake_detection_notification_text">Checking for movement during your wake-up window</string>
+    <string name="wake_detection_fgs_subtype">Runs motion-sensor wake-up detection during the short window explicitly configured by the user.</string>
+</resources>

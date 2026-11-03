@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="morning_prompt_channel_name">Morning prompts</string>
+    <string name="morning_prompt_channel_description">Prompts shown after MorningFlow detects wake-up activity</string>
+    <string name="morning_prompt_notification_title">MorningFlow</string>
+    <string name="morning_prompt_notification_body">Good morning! Ready to start your morning routine?</string>
+</resources>
