@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morning Flow</title>
+<meta name="description" content="A calm, voice-guided morning routine for Android, in eight quiet steps.">
+<meta property="og:title" content="Morning Flow">
+<meta property="og:description" content="A calm, voice-guided morning routine for Android, in eight quiet steps.">
+<meta property="og:image" content="images/ill/leave_bed_start.png">
+<meta name="theme-color" content="#f3eee3">
+<link rel="icon" href="images/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parchment: #f3eee3;
+    --parchment-deep: #ebe3d3;
+    --ink: #1c1814;
+    --ink-soft: #4a433a;
+    --terracotta: #b8401a;
+    --rule: #cfc3ad;
+    --display: "Cinzel", "Noto Serif SC", serif;
+    --serif: "Source Serif 4", Georgia, serif;
+    --meander: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%231c1814' stroke-width='2' stroke-linecap='square'%3E%3Cpath d='M0 21h24M20 21V3H5v12h9V9h-4'/%3E%3C/svg%3E");
+  }
+  * { box-sizing: border-box; }
+  html { overflow-x: clip; }
+  body {
+    margin: 0;
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  img { max-width: 100%; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding-inline: 32px; }
+
+  /* Greek key border */
+  .meander {
+    height: 34px;
+    border-block: 2px solid var(--ink);
+    background: var(--meander) repeat-x 0 3px;
+    background-size: 24px 24px;
+  }
+
+  /* Small caps labels */
+  .label {
+    font-family: var(--display);
+    font-size: 14px; font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin: 0 0 14px;
+  }
+
+  /* Top bar */
+  .top {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding-block: 22px;
+    font-family: var(--display); font-weight: 600;
+    font-size: 14px; letter-spacing: .12em; text-transform: uppercase;
+  }
+  .top .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .top .brand img { width: 30px; height: 30px; }
+  .top nav { display: flex; align-items: center; gap: 24px; }
+  .top nav a { text-decoration: none; color: var(--ink-soft); }
+  .top nav a:hover { color: var(--ink); }
+
+  /* Hero */
+  .hero {
+    display: grid; grid-template-columns: 1.05fr .95fr; gap: 64px; align-items: center;
+    padding-block: 56px 88px;
+  }
+  /* Cinzel draws lowercase as small capitals, so headings in it are set fully in capitals to keep every letter the same height */
+  h1, h2, .act h3, .virtue h3 { text-transform: uppercase; }
+  h1 {
+    font-family: var(--display); font-weight: 500;
+    font-size: clamp(38px, 5.4vw, 72px);
+    line-height: 1.05; letter-spacing: .04em;
+    margin: 0 0 16px;
+  }
+  .subtitle {
+    font-style: italic;
+    font-size: clamp(24px, 2.8vw, 32px);
+    line-height: 1.3;
+    margin: 0 0 24px;
+  }
+  .subtitle em { color: var(--terracotta); }
+  .lede { color: var(--ink-soft); max-width: 32em; margin: 0 0 36px; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 14px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 15px 28px;
+    font-family: var(--display); font-size: 14px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase; text-decoration: none;
+    border: 1.5px solid var(--ink);
+    transition: background .2s ease, color .2s ease;
+  }
+  .btn svg { width: 18px; height: 18px; flex: none; }
+  .btn-solid { background: var(--ink); color: var(--parchment); }
+  .btn-solid:hover { background: var(--terracotta); border-color: var(--terracotta); }
+  .btn-line:hover { background: var(--ink); color: var(--parchment); }
+  .fine { font-size: 15px; color: var(--ink-soft); margin: 18px 0 0; }
+
+  /* Arch window */
+  .arch {
+    aspect-ratio: 4 / 5;
+    border-radius: 999px 999px 0 0;
+    background: var(--parchment-deep);
+    border: 2px solid var(--ink);
+    outline: 1px solid var(--ink);
+    outline-offset: 8px;
+    display: grid; place-items: end center;
+    overflow: hidden;
+    max-width: 460px; width: 100%; margin-left: auto;
+  }
+  .arch img { width: 92%; display: block; margin-bottom: 4%; }
+
+  /* Section heads */
+  /* Scenes: each part of the page fills the screen. The next one opens through an arch
+     while the one underneath stays pinned, shrinks a little and dims (driven by the script below). */
+  html { background: #3b342c; }
+  main { display: block; }
+  .scene {
+    position: sticky; top: var(--stick, 0px);
+    min-height: 100vh; min-height: 100svh;
+    display: flex; flex-direction: column;
+    background: var(--parchment);
+    clip-path: var(--arch, none);
+    overflow: clip;
+    transform: scale(var(--recede, 1));
+    transform-origin: 50% var(--origin, 50%);
+  }
+  .scene::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: #1c1814; opacity: var(--shade, 0);
+  }
+  .scene > .wrap { width: 100%; }
+  .scene > .wrap:not(.top, .hero, footer) { margin-block: auto; padding-block: 104px; }
+  .scene-hero .hero { margin-block: auto; width: 100%; }
+
+  /* As the next scene covers the first one, the title spreads out and the picture drifts closer */
+  .scene-hero h1 { letter-spacing: calc(.04em + var(--q, 0) * .22em); }
+  .scene-hero .arch img { scale: calc(1 + var(--q, 0) * .12); }
+
+  /* Depth: pictures drift a little slower than the text around them */
+  [data-depth] { translate: 0 var(--py, 0px); will-change: translate; }
+
+  /* Parts of a scene arrive one after another: out of a soft blur, a short way up */
+  .rv {
+    opacity: 0; filter: blur(8px); translate: 0 22px;
+    transition: opacity .9s ease, filter 1s ease, translate 1.1s cubic-bezier(.16, 1, .3, 1);
+    transition-delay: var(--d, 0s);
+  }
+  .rv.in { opacity: 1; filter: blur(0); translate: 0 0; }
+
+  /* First load: the words wake up and the picture rises in its arch like the sun */
+  @keyframes wake { from { opacity: 0; filter: blur(8px); } }
+  @keyframes dawn { from { clip-path: inset(100% 0 0 0); transform: translateY(6%); } to { clip-path: inset(0); } }
+  .hero > div:first-child > * { animation: wake 1.1s cubic-bezier(.2,.7,.2,1) both; }
+  .hero > div:first-child > :nth-child(2) { animation-delay: .12s; }
+  .hero > div:first-child > :nth-child(3) { animation-delay: .3s; }
+  .hero > div:first-child > :nth-child(4) { animation-delay: .45s; }
+  .hero > div:first-child > :nth-child(n+5) { animation-delay: .6s; }
+  .arch img { animation: dawn 1.6s .2s cubic-bezier(.2,.7,.2,1) both; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scene { position: relative; top: auto; clip-path: none; transform: none; }
+    .scene::after { display: none; }
+    .hero > div:first-child > *, .arch img { animation: none; }
+    .rv { opacity: 1; filter: none; translate: none; transition: none; }
+    [data-depth] { translate: none; }
+  }
+  .head { text-align: center; max-width: 720px; margin: 0 auto 64px; }
+  h2 {
+    font-family: var(--display); font-weight: 500;
+    font-size: clamp(28px, 3.6vw, 44px); line-height: 1.15; letter-spacing: .05em;
+    margin: 0 0 16px;
+  }
+  .head p:not(.label) { margin: 0; font-size: 20px; color: var(--ink-soft); }
+  .ornament { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 22px; color: var(--terracotta); }
+  .ornament::before, .ornament::after { content: ""; width: 56px; height: 1px; background: var(--rule); }
+  .ornament svg { width: 14px; height: 14px; }
+
+  /* The eight steps, as a frieze */
+  .frieze {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-block: 2px solid var(--ink); border-left: 1px solid var(--rule);
+  }
+  .act {
+    border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    padding: 26px 24px 28px;
+    display: flex; flex-direction: column;
+  }
+  .frieze .act:nth-last-child(-n+4) { border-bottom: 0; }
+  .act .num {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--display); font-weight: 600; font-size: 16px; color: var(--terracotta);
+  }
+  .act .num span { font-family: var(--serif); font-weight: 400; font-size: 15px; color: var(--ink-soft); }
+  .act img { aspect-ratio: 1; object-fit: contain; margin: 16px 0 14px; display: block; width: 100%; }
+  .act h3 { font-family: var(--display); font-weight: 600; font-size: 16px; letter-spacing: .06em; margin: 0; }
+
+  /* Screens */
+  .screens { background: var(--parchment-deep); }
+  .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; align-items: start; }
+  .gallery figure { margin: 0; text-align: center; }
+  .phone {
+    border: 7px solid var(--ink); border-radius: 36px; overflow: hidden; background: var(--ink);
+    aspect-ratio: 1344 / 2992;
+    box-shadow: 0 30px 50px -30px rgba(60, 40, 10, .45);
+    max-width: 300px; margin: 0 auto;
+  }
+  .phone img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .gallery figcaption { margin-top: 28px; }
+  .gallery figcaption b {
+    display: block; margin-bottom: 4px;
+    font-family: var(--display); font-weight: 600; font-size: 17px; letter-spacing: .1em; text-transform: uppercase;
+  }
+  .gallery figcaption span { color: var(--ink-soft); font-size: 17px; }
+
+  /* Features */
+  .virtues { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 72px; }
+  .virtue {
+    display: grid; grid-template-columns: 56px 1fr; gap: 8px; align-items: baseline;
+    padding: 26px 0; border-top: 1px solid var(--rule);
+  }
+  .virtue .n { font-family: var(--display); font-weight: 600; color: var(--terracotta); font-size: 18px; line-height: 1.5; }
+  .virtue h3 { font-family: var(--display); font-weight: 600; font-size: 17px; letter-spacing: .05em; margin: 0 0 6px; }
+  .virtue p { margin: 0; color: var(--ink-soft); }
+
+  /* Install */
+  .install { display: grid; grid-template-columns: .9fr 1.1fr; gap: 72px; align-items: center; }
+  .install .art img { display: block; width: 100%; max-width: 420px; margin: 0 auto; }
+  .steps { list-style: none; padding: 0; margin: 28px 0 36px; }
+  .steps li { display: grid; grid-template-columns: 48px 1fr; padding: 16px 0; border-top: 1px solid var(--rule); }
+  .steps li:last-child { border-bottom: 1px solid var(--rule); }
+  .steps .n { font-family: var(--display); font-weight: 600; color: var(--terracotta); }
+
+  footer { padding-block: 40px 56px; text-align: center; color: var(--ink-soft); font-size: 15px; }
+  footer p { margin: 0; }
+  footer p + p { margin-top: 8px; }
+  footer a { text-decoration: none; border-bottom: 1px solid var(--rule); }
+  footer a:hover { color: var(--ink); border-color: var(--ink); }
+
+  @media (max-width: 960px) {
+    .hero { grid-template-columns: 1fr; gap: 56px; padding-block: 32px 72px; }
+    .arch { margin-inline: auto; max-width: 380px; }
+    .frieze { grid-template-columns: repeat(2, 1fr); }
+    .frieze .act:nth-last-child(-n+4) { border-bottom: 1px solid var(--rule); }
+    .frieze .act:nth-last-child(-n+2) { border-bottom: 0; }
+    .gallery { grid-template-columns: 1fr; gap: 56px; }
+    .phone { max-width: 260px; }
+    .virtues { grid-template-columns: 1fr; }
+    .install { grid-template-columns: 1fr; gap: 40px; }
+    .install .art img { max-width: 300px; }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding-inline: 16px; }
+    .top nav { gap: 14px; }
+    .top .hide-sm { display: none; }
+    .scene > .wrap:not(.top, .hero, footer) { padding-block: 72px; }
+    .head { margin-bottom: 44px; }
+    .act { padding: 18px 14px 20px; }
+    .act h3 { font-size: 14px; }
+    .virtue { grid-template-columns: 44px 1fr; }
+    .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<main>
+<section class="scene scene-hero">
+<div class="meander" aria-hidden="true"></div>
+<header class="wrap top">
+  <a class="brand" href="#"><img src="images/icon.png" alt="">Morning Flow</a>
+  <nav>
+    <a class="hide-sm" href="https://lyrali.yumengli1717.workers.dev/">Lyra Li</a>
+    <a href="https://github.com/inapanopticon/MorningFlow">GitHub</a>
+  </nav>
+</header>
+  <div class="wrap hero">
+    <div>
+      <p class="label">An Android app</p>
+      <h1>Morning Flow</h1>
+      <p class="subtitle">Every morning, a <em>small ceremony.</em></p>
+      <p class="lede">Morning Flow guides the first half hour of your day in eight quiet steps. A warm voice leads each one, your phone counts the squats and steps, and before you leave it tells you the weather and what to bring.</p>
+      <div class="actions">
+        <a class="btn btn-solid" href="https://github.com/inapanopticon/MorningFlow/releases/latest/download/MorningFlow.apk">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          <span>Download for Android</span>
+        </a>
+        <a class="btn btn-line" href="https://github.com/inapanopticon/MorningFlow">
+          <span>View on GitHub</span>
+        </a>
+      </div>
+      <p class="fine">Free · Android 8.0 or newer · about 17 MB</p>
+    </div>
+    <div class="arch"><img src="images/ill/leave_bed_start.png" alt="A figure greeting the sun beside a great black bird"></div>
+  </div>
+
+</section>
+
+  <section class="scene">
+  <div class="meander" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="head">
+        <div class="ornament" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M7 0l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="currentColor"/></svg></div>
+        <p class="label">The routine</p>
+        <h2>The Eight Steps</h2>
+        <p>Thirty minutes, from bed to door.</p>
+      </div>
+      <div class="frieze">
+        <div class="act"><div class="num">01 <span>2 min</span></div><img src="images/ill/leave_bed_active.png" alt="" loading="lazy"><h3>Leave Bed</h3></div>
+        <div class="act"><div class="num">02 <span>4 min</span></div><img src="images/ill/physical_wakeup_stretching.png" alt="" loading="lazy"><h3>Wake the Body</h3></div>
+        <div class="act"><div class="num">03 <span>5 min</span></div><img src="images/ill/morning_reset.png" alt="" loading="lazy"><h3>Morning Reset</h3></div>
+        <div class="act"><div class="num">04 <span>4 min</span></div><img src="images/ill/meal_preparation.png" alt="" loading="lazy"><h3>Make Breakfast</h3></div>
+        <div class="act"><div class="num">05 <span>6 min</span></div><img src="images/ill/wash_groom.png" alt="" loading="lazy"><h3>Wash &amp; Groom</h3></div>
+        <div class="act"><div class="num">06 <span>4 min</span></div><img src="images/ill/breakfast.png" alt="" loading="lazy"><h3>Breakfast</h3></div>
+        <div class="act"><div class="num">07 <span>5 min</span></div><img src="images/ill/get_ready.png" alt="" loading="lazy"><h3>Get Ready</h3></div>
+        <div class="act"><div class="num">08 <span>2 min</span></div><img src="images/ill/leaving_reminder.png" alt="" loading="lazy"><h3>Head Out</h3></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene screens">
+  <div class="meander" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="head">
+        <div class="ornament" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M7 0l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="currentColor"/></svg></div>
+        <p class="label">In the hand</p>
+        <h2>Made for Sleepy Eyes</h2>
+        <p>Large type, few words, and a voice that does the talking, so you can follow from across the room.</p>
+      </div>
+      <div class="gallery">
+        <figure>
+          <div class="phone"><img src="images/home.jpg" alt="Home screen with today's weather and the eight steps" loading="lazy"></div>
+          <figcaption><b>The Day</b><span>Weather, what's next and today's routine.</span></figcaption>
+        </figure>
+        <figure>
+          <div class="phone"><img src="images/session1.jpg" alt="A step in progress: Good morning, with a countdown" loading="lazy"></div>
+          <figcaption><b>The Step</b><span>A voice and a timer lead each step.</span></figcaption>
+        </figure>
+        <figure>
+          <div class="phone"><img src="images/leaving.jpg" alt="Leaving reminder with weather and things to bring" loading="lazy"></div>
+          <figcaption><b>The Door</b><span>Weather, plans and what to bring.</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene">
+  <div class="meander" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="head">
+        <div class="ornament" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M7 0l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="currentColor"/></svg></div>
+        <p class="label">What it does</p>
+        <h2>Six Small Things</h2>
+        <p>Quiet when it can be, there when you need it.</p>
+      </div>
+      <div class="virtues">
+        <div class="virtue"><span class="n">01</span><div><h3>A Voice to Follow</h3><p>Every step is spoken in one warm, recorded voice, timed to finish before the countdown ends.</p></div></div>
+        <div class="virtue"><span class="n">02</span><div><h3>Knows You're Up</h3><p>Inside your wake-up window, the first time you pick up your phone it offers to begin.</p></div></div>
+        <div class="virtue"><span class="n">03</span><div><h3>Counts for You</h3><p>Squats and steps are counted by the phone's motion sensors. There's nothing to tap.</p></div></div>
+        <div class="virtue"><span class="n">04</span><div><h3>Short, Medium, Long</h3><p>Every step comes in three lengths, for a rushed day or a slow one.</p></div></div>
+        <div class="virtue"><span class="n">05</span><div><h3>Before You Leave</h3><p>Live weather, your next events and your packing list, with nudges for an umbrella or a jacket.</p></div></div>
+        <div class="virtue"><span class="n">06</span><div><h3>A Record of Mornings</h3><p>A calendar marks every finished morning, in light or dark to match your phone.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene scene-install" id="install">
+  <div class="meander" aria-hidden="true"></div>
+    <div class="wrap install">
+      <div class="art"><img src="images/ill/morning_session_complete.png" alt="" loading="lazy"></div>
+      <div>
+        <p class="label">Install</p>
+        <h2>Bring It Home</h2>
+        <ol class="steps">
+          <li><span class="n">1</span><span>Open this page on your Android phone and tap Download.</span></li>
+          <li><span class="n">2</span><span>Open the downloaded file. If asked, allow your browser to install apps.</span></li>
+          <li><span class="n">3</span><span>Tap Install, open Morning Flow and allow what it asks for.</span></li>
+        </ol>
+        <div class="actions">
+          <a class="btn btn-solid" href="https://github.com/inapanopticon/MorningFlow/releases/latest/download/MorningFlow.apk">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            <span>Download for Android</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  <div class="meander" aria-hidden="true"></div>
+<footer class="wrap">
+  <p><span>Made by</span> <a href="https://lyrali.yumengli1717.workers.dev/">Lyra Li</a></p>
+  <p>Kotlin · Jetpack Compose · <a href="https://github.com/inapanopticon/MorningFlow">Source</a></p>
+</footer>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+  // Scene transitions. Each scene slides over the one before it with softly rounded top corners
+  // that straighten as it lands; the scene underneath stays pinned, shrinks a little and dims.
+  const scenes = [...document.querySelectorAll(".scene")];
+  const still = matchMedia("(prefers-reduced-motion: reduce)");
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  const deep = [...document.querySelectorAll(".arch img, .act img, .phone, .install .art img")];
+  deep.forEach(el => el.dataset.depth = el.matches(".phone") ? 0.04 : el.matches(".act img") ? 0.02 : 0.06);
+
+  function pin() {
+    // A scene taller than the screen pins once its bottom reaches the screen's bottom, so all of it is read first.
+    const vh = innerHeight;
+    scenes.forEach(s => s.style.setProperty("--stick", Math.min(0, vh - s.offsetHeight) + "px"));
+  }
+
+  function frame() {
+    if (still.matches) return;
+    const vh = innerHeight, vw = document.documentElement.clientWidth;
+    const open = scenes.map((s, i) => {
+      if (i === 0) return 1;
+      const p = Math.min(1, Math.max(0, 1 - s.getBoundingClientRect().top / vh));
+      return ease(p);
+    });
+    scenes.forEach((s, i) => {
+      const e = open[i];
+      if (e >= 1) {
+        s.style.setProperty("--arch", "none");
+      } else {
+        const side = (1 - e) * 3;                            // starts a touch narrower than the screen
+        const r = Math.min(vw * 0.08, 72) * (1 - e);         // rounded top that straightens as it lands
+        s.style.setProperty("--arch", `inset(0 ${side}% 0 ${side}% round ${r}px ${r}px 0 0)`);
+      }
+      const q = i + 1 < scenes.length ? open[i + 1] : 0;    // how far the next scene has come over this one
+      s.style.setProperty("--q", q);
+      s.style.setProperty("--recede", 1 - 0.08 * q);
+      s.style.setProperty("--shade", 0.5 * q);
+      s.style.setProperty("--origin", (vh / 2 - s.getBoundingClientRect().top) + "px");
+    });
+    deep.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > vh + 200) return;
+      el.style.setProperty("--py", (-(r.top + r.height / 2 - vh / 2) * el.dataset.depth).toFixed(1) + "px");
+    });
+  }
+
+  // Arrivals: when a scene comes into view, its heading, text and pictures fade in one after another.
+  const groups = [".hero > div:first-child", ".head", ".frieze", ".gallery", ".virtues", ".install > div:last-child", ".install .art"];
+  groups.forEach(g => document.querySelectorAll(g).forEach(box => {
+    const items = box.matches(".install .art") ? [box] : [...box.children];
+    if (box.closest(".scene-hero")) return;                  // the first screen has its own opening
+    items.forEach((el, k) => { el.classList.add("rv"); el.style.setProperty("--d", (k * 0.08) + "s"); });
+  }));
+  const seen = new IntersectionObserver(list => list.forEach(x => {
+    if (x.isIntersecting) { x.target.classList.add("in"); seen.unobserve(x.target); }
+  }), { rootMargin: "0px 0px -12% 0px" });
+  document.querySelectorAll(".rv").forEach(el => still.matches ? el.classList.add("in") : seen.observe(el));
+
+  // Smooth, gliding scroll (Lenis), so every scroll-linked effect moves without steps.
+  if (!still.matches && window.Lenis) {
+    const lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
+    lenis.on("scroll", () => tick());
+    const loop = t => { lenis.raf(t); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  }
+
+  let queued = false;
+  const tick = () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; frame(); }); } };
+  addEventListener("scroll", tick, { passive: true });
+  addEventListener("resize", () => { pin(); tick(); });
+  new ResizeObserver(() => { pin(); tick(); }).observe(document.querySelector("main"));
+  pin();
+  frame();
+</script>
+</body>
+</html>
